@@ -1,12 +1,12 @@
-# 第6章 Gauss過程と関数データ解析
+# Ch.6　Gauss Process and Functional Data Analysis
 
-## 6.1 回帰
+## 6.1 Regression
 
-### 例83
+### Example 83
 
-## (m,k)の定義
+## Definition of (m, k) 
 m=function(x) 0; k=function(x,y) exp(-(x-y)^2/2)
-## 関数 gp.sample の定義
+## Definition of function gp_sample 
 gp.sample=function(x,m,k){
   n=length(x)
   m.x=m(x)
@@ -15,7 +15,7 @@ gp.sample=function(x,m,k){
   u=rnorm(n)
   return(as.vector(R%*%u+m.x))
 }
-## 乱数を発生して、共分散行列を生成して k.xx と比較
+## Generate random numbers, generate covariance matrix and compare with k.xx
 x=seq(-2,2,1); n=length(x)
 r=100; z=matrix(0,r,n); for(i in 1:r)z[i,]=gp.sample(x,m,k)
 k.xx=matrix(0,n,n); for(i in 1:n)for(j in 1:n)k.xx[i,j]=k(x[i],x[j])
@@ -24,12 +24,12 @@ cov(z)
 k.xx
 
 
-### 例84
+### Example 84
 
-## (m,k)の定義
+## Definition of (m, k)
 m=function(x) x[,1]-x[,2]
 k=function(x,y) exp(-sum((x-y)^2)/2)
-## 関数 gp.sample の定義
+## Definition of function gp_sample 
 gp.sample=function(x,m,k){
   n=nrow(x)
   m.x=m(x)
@@ -38,7 +38,7 @@ gp.sample=function(x,m,k){
   u=rnorm(n)
   return(R%*%u+m.x)
 }
-## 乱数を発生して、共分散行列を生成して k.xx と比較
+## Generate random numbers, generate covariance matrix and compare with k.xx
 n=5; x=matrix(rnorm(n*2),n,n)
 r=100; z=matrix(0,r,n); for(i in 1:r)z[i,]=gp.sample(x,m,k)
 k.xx=matrix(0,n,n); for(i in 1:n)for(j in 1:n)k.xx[i,j]=k(x[i],x[j])
@@ -48,17 +48,17 @@ k.xx
 
 gp.1=function(x.pred){
   h=array(dim=n); for(i in 1:n)h[i]=k(x.pred,x[i])
-  R=solve(K+sigma.2*diag(n))              ## O(n^3)の計算
+  R=solve(K+sigma.2*diag(n))              ## Calculaion of O(n^3)
   mm=mu(x.pred)+t(h)%*%R%*%(y-mu(x))
   ss=k(x.pred,x.pred)-t(h)%*%R%*%h
   return(list(mm=mm,ss=ss))
 }
 gp.2=function(x.pred){
   h=array(dim=n); for(i in 1:n)h[i]=k(x.pred,x[i])
-  L=chol(K+sigma.2*diag(n))               ## O(n^3/3) の計算
-  alpha=solve(L,solve(t(L),y-mu(x)))      ## O(n^2) の計算
+  L=chol(K+sigma.2*diag(n))               ## Calculaion of O(n^3/3)
+  alpha=solve(L,solve(t(L),y-mu(x)))      ## Calculaion of O(n^2)
   mm=mu(x.pred)+sum(t(h)*alpha)
-  gamma=solve(t(L),h)                         ## O(n^2) の計算
+  gamma=solve(t(L),h)                         ## Calculaion of O(n^2)
   ss=k(x.pred,x.pred)-sum(gamma^2)
   return(list(mm=mm,ss=ss))
 }
@@ -67,21 +67,21 @@ gp.2=function(x.pred){
 ### 例85
 
 sigma.2=0.2     
-k=function(x,y)exp(-(x-y)^2/2/sigma.2)  # 共分散関数
-mu=function(x) x                        # 平均関数
-n=1000; x=runif(n)*6-3; y=sin(x/2)+rnorm(n)  # データ生成
+k=function(x,y)exp(-(x-y)^2/2/sigma.2)  # covariance function
+mu=function(x) x                        # average function
+n=1000; x=runif(n)*6-3; y=sin(x/2)+rnorm(n)  # Data Generation
 K=array(dim=c(n,n)); for(i in 1:n)for(j in 1:n)K[i,j]=k(x[i],x[j])
-## 実行時間を測定
+## Measure execution time
 library(tictoc)
 tic(); gp.1(0); toc()
 tic(); gp.2(0); toc()
-# 平均の前後で 3 sigma の幅も記載
+# 3 sigma width before and after the average is noted
 u.seq=seq(-3,3,0.1); v.seq=NULL; w.seq=NULL;
 for(u in u.seq){res=gp.1(u); v.seq=c(v.seq,res$mm); w.seq=c(w.seq,sqrt(res$ss))}
 plot(u.seq,v.seq,xlim=c(-3,3),ylim=c(-3,3),type="l")
 lines(u.seq,v.seq+3*w.seq,col="blue"); lines(u.seq,v.seq-3*w.seq,col="blue")
 points(x,y)
-## サンプルを変えて 5 回
+## 5 times with different samples
 plot(0,xlim=c(-3,3),ylim=c(-3,3),type="n")
 n=100
 for(h in 1:5){
@@ -94,16 +94,16 @@ for(h in 1:5){
 }
 
 
-## 6.2 分類
+## 6.2 Classification
 
-### 例86
+### Example 86
 
-## Iris データ
+## Iris Data
 df=iris
 x=df[1:100,1:4]
 y=c(rep(1,50),rep(-1,50))
 n=length(y)
-## 4 個の共変量でカーネルを計算
+## Compute kernels with 4 covariates
 k=function(x,y) exp(sum(-(x-y)^2)/2)
 K=matrix(0,n,n)
 for(i in 1:n)for(j in 1:n)K[i,j]=k(x[i,],x[j,])
@@ -111,13 +111,13 @@ eps=0.00001
 f=rep(0,n)
 g=rep(0.1,n)
 while(sum((f-g)^2)>eps){
-  g=f     ## 比較のため、更新前の値を保存する
+  g=f     ## Store the value before updating for comparison
   v=exp(-y*f)
   u=y*v/(1+v)
   w=as.vector(v/(1+v)^2)
   W=diag(w); W.p=diag(w^0.5); W.m=diag(w^(-0.5))
   L=chol(diag(n)+W.p%*%K%*%W.p)
-  L=t(L)  ## R 言語の chol 関数は転置した行列を出力する
+  L=t(L)  ## R language chol function outputs a transposed matrix
   gamma=W%*%f+u
   beta=solve(L,W.p%*%K%*%gamma)
   alpha=solve(t(L)%*%W.m,beta)
@@ -127,14 +127,14 @@ as.vector(f)
 
 pred=function(z){
     kk=array(0,dim=n); for (i in 1:n)kk[i]=k(z,x[i,])
-    mu=sum(kk*as.vector(u))      ## 平均
-    alpha=solve(L,W.p%*%kk); sigma2=k(z,z)-sum(alpha^2)    ## 分散
-    m=1000; b=rnorm(m,mu,sigma2); pi=sum((1+exp(-b))^(-1))/m   ## 予測値
+    mu=sum(kk*as.vector(u))      ## Average
+    alpha=solve(L,W.p%*%kk); sigma2=k(z,z)-sum(alpha^2)    ## Variance
+    m=1000; b=rnorm(m,mu,sigma2); pi=sum((1+exp(-b))^(-1))/m   ## Predicted value
     return(pi)
 }
 
 
-### 例87
+### Example 87
 
 z=array(0,dim=4)
 for(j in 1:4)z[j]=mean(x[1:50,j])
@@ -144,14 +144,14 @@ for(j in 1:4)z[j]=mean(x[51:100,j])
 pred(z)
 
 
-## 6.3 補助変数法
+## 6.3 Inducing variable method
 
-### 例88
+### Eample 88
 
-sigma.2=0.05     #本来は推定すべき
-k=function(x,y)exp(-(x-y)^2/2/sigma.2)  # 共分散関数
-mu=function(x) x                        # 平均関数
-n=200; x=runif(n)*6-3; y=sin(x/2)+rnorm(n)  # データ生成
+sigma.2=0.05     #Originally, it should be presumed
+k=function(x,y)exp(-(x-y)^2/2/sigma.2)  # Covariance function
+mu=function(x) x                        # Average function
+n=200; x=runif(n)*6-3; y=sin(x/2)+rnorm(n)  # Data Generation
 eps=10^(-6)
 
 m=100
@@ -165,26 +165,26 @@ K.zz.inv=solve(K.zz+diag(rep(10^eps,m)))
 lambda=array(dim=n)
 for(i in 1:n)lambda[i]=k(x[i],x[i])-K.xz[i,1:m]%*%K.zz.inv%*%K.xz[i,1:m]
 Lambda.0.inv=diag(1/(lambda+sigma.2))
-Q=K.zz+t(K.xz)%*%Lambda.0.inv%*%K.xz    ## Q の計算は、O(n^3) を要求しない
+Q=K.zz+t(K.xz)%*%Lambda.0.inv%*%K.xz    ## The computation of Q does not require O(n^3)
 Q.inv=solve(Q+diag(rep(eps,m)))
 muu=Q.inv%*%t(K.xz)%*%Lambda.0.inv%*%(y-m.x)
 dif=K.zz.inv-Q.inv
 K=array(dim=c(n,n)); for(i in 1:n)for(j in 1:n)K[i,j]=k(x[i],x[j])
-R=solve(K+sigma.2*diag(n))              ## O(n^3) の計算が必要
+R=solve(K+sigma.2*diag(n))              ## O(n^3) calculations are required
 
 gp.ind=function(x.pred){
   h=array(dim=m); for(i in 1:m)h[i]=k(x.pred,z[i])
   mm=mu(x.pred)+h%*%muu
   ss=k(x.pred,x.pred)-h%*%dif%*%h
   return(list(mm=mm,ss=ss))
-}                                       ## 補助変数法を用いる
+}                                       ## Using the inducing variable method
 
 gp.1=function(x.pred){
   h=array(dim=n); for(i in 1:n)h[i]=k(x.pred,x[i])
   mm=mu(x.pred)+t(h)%*%R%*%(y-mu(x))
   ss=k(x.pred,x.pred)-t(h)%*%R%*%h
   return(list(mm=mm,ss=ss))
-}　　　　　　　　　　　　　　　　　　　　## 補助変数法を用いない
+}　　　　　　　　　　　　　　　　　　　　## Not using the inducing variable method
 
 x.seq=seq(-2,2,0.1)
 mmv=NULL; ssv=NULL
@@ -210,14 +210,14 @@ lines(x.seq,mmv-3*sqrt(ssv),lty=3,col="blue")
 points(x,y)
 
 
-## 6.4 Karhunen-Loeve展開
+## 6.4 Karhunen-Loeve Expansion
 
-### 例89
+### Example 89
 
-lambda=function(j) 4/((2*j-1)*pi)^2           ## 固有値
-ee=function(j,x) sqrt(2)*sin((2*j-1)*pi/2*x)  ## 固有関数の定義
+lambda=function(j) 4/((2*j-1)*pi)^2           ## eigenvalue
+ee=function(j,x) sqrt(2)*sin((2*j-1)*pi/2*x)  ## Definition of Eigenfunction 
 n=10; m=7
-f=function(z,x){                              ## ガウス過程の定義
+f=function(z,x){                              ## Definition of Gauss Process
   n=length(z)
   S=0; for(i in 1:n)S=S+z[i]*ee(i,x)*sqrt(lambda(i))
   return(S)
@@ -240,7 +240,7 @@ matern=function(nu,l,r){
 }
 
 
-### 例90
+### Example 90
 
 m=10
 l=0.1
@@ -250,19 +250,19 @@ legend("topright",legend=paste("nu=",(1:m)+0.5),lwd=2,col=1:m,)
 title("Matern Kernel (l=1)")
 
 
-### 例91
+### Example 91
 
 rand.100=function(Sigma){
-  L=t(chol(Sigma))     ## 共分散行列 を Cholesky 分解  
+  L=t(chol(Sigma))     ## Cholesky decomposition of the covariance matrix
   u=rnorm(100)
-  y=as.vector(L%*%u)   ## 平均 0 共分散行列 の乱数を 1 組生成
+  y=as.vector(L%*%u)   ## Generates a pair of random numbers of covariance matrix Sigma with mean 0
 }
 
 x = seq(0,1,length=100)
 z = abs(outer(x,x,"-")) # compute distance matrix, d_{ij} = |x_i - x_j|
 l=0.1
 
-Sigma_OU = exp(-z/l)      ## OU:   matern(1/2,l,z) では遅い
+Sigma_OU = exp(-z/l)      ## OU: Slow in matern(1/2, l, z)
 y=rand.100(Sigma_OU)
 
 plot(x,y,type="l",ylim=c(-3,3))
@@ -281,17 +281,17 @@ for(i in 1:5){
 }
 title("Matern process (nu=3/2,l=0.1)")
 
-## 6.5 関数データ解析
+## 6.5 Functional Data Analysis
 
-### 例92
+### Exampele 92
 
 library(fda)
-g=function(j,x){        ##  基底を p 個用意する
+g=function(j,x){        ##  Prepare p bases
   if(j==1) return(1/sqrt(2*pi)) 
   if(j%%2==0) return(cos((j%/%2)*x)/sqrt(pi))
   else return(sin((j%/%2)*x)/sqrt(pi))
 }
-beta=function(x,y){     ##  関数の p 個の基底の前の係数を計算する
+beta=function(x,y){     ##  Compute the coefficients before the p bases of the function
     X=matrix(0,N,p)
     for(i in 1:N)for(j in 1:p)X[i,j]=g(j,x[i])
     beta=solve(t(X)%*%X+0.0001*diag(p))%*%t(X)%*%y
@@ -304,7 +304,7 @@ res=prcomp(C)
 B=res$rotation
 xx=res$x
 
-z=function(i,m,x){   ##  p 個の基底のうち、m 主成分で近似したもとの関数
+z=function(i,m,x){   ##  The original function approximated by m principal components out of p bases
   S=0
   for(j in 1:p)for(k in 1:m)for(r in 1:p)S=S+C[i,j]*B[j,k]*B[r,k]*g(r,x)
   return(S)
@@ -322,7 +322,7 @@ lambda=res$sdev^2
 ratio=lambda/sum(lambda)
 plot(1:5,ratio[1:5],xlab="PC1 through PC5",ylab="Ratio",type="l",main="Ratio ")
 
-h=function(coef,x){     ##  係数を用いて関数を定義する
+h=function(coef,x){     ##  Define functions with coefficients
   S=0
   for(j in 1:p)S=S+coef[j]*g(j,x)
   return(S)

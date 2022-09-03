@@ -1,14 +1,14 @@
-# 第3章 再生核Hilbert空間
+# Ch.3　Reproducing Kernel Hilbert Space
 
 ## 3.1 RKHS
 
-## 3.2 Sobolev空間
+## 3.2 Sobolev Space
 
-## 3.3 Mercerの定理
+## 3.3 Mercer's theorem
 
-### 例59
+### Example 59
 
-Hermite=function(j){   ##  R言語は添字が1から
+Hermite=function(j){   ##  The R language has subscripts from 1
   if(j==0)return(1)
   a=rep(0,j+2); b=rep(0,j+2)
   a[1]=1
@@ -17,12 +17,12 @@ Hermite=function(j){   ##  R言語は添字が1から
     for(k in 1:(i+1))b[k+1]=2*a[k]-(k+1)*a[k+2]
     a=b
   }
-  return(b[1:(j+1)])   ## Hermite多項式の係数を出力
+  return(b[1:(j+1)])   ## Output coefficients of Hermite polynomial
 }
 
-Hermite(2)             ## 2次のHermite多項式
-Hermite(3)             ## 3次のHermite多項式
-Hermite(4)             ## 4次のHermite多項式
+Hermite(2)             ## Hermite polynomial of the second degree
+Hermite(3)             ## Hermite polynomial of the third degree
+Hermite(4)             ## Hermite polynomial of the fourth degree
 
 H=function(j,x){
   coef=Hermite(j)
@@ -36,18 +36,18 @@ phi=function(j,x) exp(-(cc-a)*x^2)*H(j,sqrt(2*cc)*x)
 curve(phi(0,x),-2,2, ylim=c(-2,8),col=1,ylab="phi")
 for(i in 1:3)curve(phi(i,x),-2,2, ylim=c(-2,8), add=TRUE, ann=FALSE, col=i+1)
 legend("topright",legend=paste("j=",0:3),lwd=1, col=1:4)
-title("Gaussカーネルの固有関数")
+title("Characteristic function of Gauss Kernel")
 
 
-### 例62
+### Example 62
 
-## カーネルの定義
+## Definition of Kernel
 sigma=1; k=function(x,y)exp(-(x-y)^2/sigma^2)
 
-## mサンプルの発生とグラム行列の設定
+## Sample generation and gram matrix setup
 m=300; x=rnorm(m)-2*rnorm(m)^2+3*rnorm(m)^3
 
-## 固有値・固有ベクトルの計算
+## Calculation of eigenvalues and eigenvectors
 K=matrix(0,m,m)
 for(i in 1:m)for(j in 1:m)K[i,j]=k(x[i],x[j])
   eig=eigen(K)
@@ -57,12 +57,12 @@ for(i in 1:m)for(j in 1:m)K[i,j]=k(x[i],x[j])
   alpha=array(0,dim=c(m,m))
   for(i in 1:m)alpha[,i]=U[,i]*sqrt(m)/lam.m[i]
   
-## グラフの表示
+## Display graph
 F=function(y,i){
   S=0; for(j in 1:m)S=S+alpha[j,i]*k(x[j],y)
   return(S)
 }
-i=1  ## i の値を変えて実行する。
+i=1  ## Run with different i's
 G=function(y)F(y,i)
 plot(G,xlim=c(-2,2))
 title("Eigen Values and their Eigen Functions")

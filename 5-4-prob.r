@@ -1,9 +1,9 @@
-# 第4章 カーネル計算の実際（問題46～64）
+# Ch.4　Kernel Computation in Practice（Problem 46～64）
 
 ## 48
 
 kernel.pca.train <- function(x, k) {
-  # データ x とカーネル k からグラム行列を求める。
+  # Find the Gram matrix from the data x and the kernel k.
   res <- eigen(K)
   alpha <- matrix(0, n, n)
   for (i in 1:n)
@@ -12,7 +12,7 @@ kernel.pca.train <- function(x, k) {
 }
 
 kernel.pca.test <- function(x, k, alpha, m, z) {
-  # x, k, alpha, m, z から m 次までのスコア pca を求める
+  # Find the score pca from x, k, alpha, m, z to dimension m.
   return(pca)
 }
 

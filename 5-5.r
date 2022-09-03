@@ -1,19 +1,19 @@
-# 第5章 MMDとHSIC
+# Ch.5　MMD and HSIC
 
-## 5.1 RKHSにおける確率変数
+## 5.1 Random Variables in RKHS
 
-## 5.2 MMDと2標本問題
+## 5.2 MMD and 2-sample problem
 
-## 例71
+## Example 71
 
 sigma=1; k=function(x,y)exp(-(x-y)^2/sigma^2)
-## データの生成
+## Data Generation
 n=100
 xx=rnorm(n)
-yy=rnorm(n)       ## 分布が等しいとき
-# yy=rnorm(n)*2   ## 分布が等しくないとき
+yy=rnorm(n)       ## When the distributions are equal
+# yy=rnorm(n)*2   ## When the distributions are not equal
 x=xx;y=yy 
-## 帰無分布の計算
+## Calculation of the null distribution
 T=NULL
 for(h in 1:100){
   index1=sample(n,n/2)
@@ -25,24 +25,24 @@ for(h in 1:100){
   T=c(S/n/(n-1),T)
 }
 v=quantile(T,0.95)
-## 統計量の計算
+## Calculation of statistics
 S=0; for(i in 1:n)for(j in 1:n)if(i!=j)S=S+k(x[i],x[j])+k(y[i],y[j])-k(x[i],y[j])-k(x[j],y[i])
 u=S/n/(n-1)
-## グラフの図示
+## Illustration of graphs
 plot(density(T),xlim=c(min(T,v,u),max(T,v,u)))
 abline(v=v,col="red",lty=2,lwd=2)
 abline(v=u,col="blue",lty=1,lwd=2)
 
 
-### 例73
+### Example 73
 
 sigma=1; k=function(x,y)exp(-(x-y)^2/sigma^2)
-## データの生成
+## Data Generation
 n=100
 x=rnorm(n)
-y=rnorm(n)        ## 分布が等しいとき
-# y=rnorm(n)*2    ## 分布が等しくないとき
-## 帰無分布の計算
+y=rnorm(n)        ## When the distributions are equal
+# y=rnorm(n)*2    ## When the distributions are not equal
+## Calculation of the null distribution
 K=matrix(0,n,n)
 for(i in 1:n)for(j in 1:n)K[i,j]=k(x[i],x[j])+k(y[i],y[j])-k(x[i],y[j])-k(x[j],y[i])
 lambda=eigen(K)$values/n
@@ -50,16 +50,16 @@ r=20
 z=NULL
 for(h in 1:10000)z=c(z,1/n*(sum(lambda[1:r]*(rchisq(1:r, df=1)-1))))
 v=quantile(z,0.95)
-## 統計量の計算
+## Calculation of statistics
 S=0
 for(i in 1:(n-1))for(j in (i+1):n)S=S+k(x[i],x[j])+k(y[i],y[j])-k(x[i],y[j])-k(x[j],y[i])
 u=S/n/(n-1)
-## グラフの図示
+## Illustration of graphs
 plot(density(z),xlim=c(min(z,v,u),max(z,v,u)))
 abline(v=v,col="red",lty=2,lwd=2)
 abline(v=u,col="blue",lty=1,lwd=2)
 
-## 5.3 HSICと独立性検定
+## 5.3 HSIC and Independence Tests
 
 HSIC.1=function(x,y,k.x,k.y){
      n=length(x)
@@ -86,11 +86,11 @@ HSIC.1=function(x,y,k.x,k.y){
      return(sum(diag(K.x%*%H%*%K.y%*%H))/n^2)
 }
 
-### 例76
+### Example 76
 
 k.x=function(x,y)exp(-norm(x-y,"2")^2/2); k.y=k.x
 n=100
-for(a in c(0,0.1,0.2,0.4,0.6,0.8)){      ## aは相関係数
+for(a in c(0,0.1,0.2,0.4,0.6,0.8)){      ## a is the correlation coefficient
      x=rnorm(n); z=rnorm(n); y=a*x+sqrt(1-a^2)*z
      print(HSIC.1(x,y,k.x,k.y))
 }
@@ -109,16 +109,16 @@ HSIC.2=function(x,y,z,k.x,k.y,k.z){
      return(S/n^2-2*T/n^3+U*V/n^4)
 }
 
-### 例77
+### Example 77
 
-cc=function(x,y)sum(x*y)/length(x)       ## cc(x,y)/cc(x,x) で偏相関係数
-f=function(u,v)u-cc(u,v)/cc(v,v)*v       ## 残差
+cc=function(x,y)sum(x*y)/length(x)       ## Partial correlation coefficient at cc(x,y)/cc(x,x)
+f=function(u,v)u-cc(u,v)/cc(v,v)*v       ## residual
 
-## データ生成 ##
+## Data Generation ##
 n=30
 x=rnorm(n)^2-rnorm(n)^2; y=2*x+rnorm(n)^2-rnorm(n)^2; z=x+y+rnorm(n)^2-rnorm(n)^2
 x=x-mean(x); y=y-mean(y); z=z-mean(z)
-## 上流を推定 ##
+## Estimate the top ##
 cc=function(x,y)sum(x*y)/length(x)
 f=function(u,v)u-cc(u,v)/cc(v,v)*v
 x.y=f(x,y); y.z=f(y,z); z.x=f(z,x); x.z=f(x,z); z.y=f(z,y); y.x=f(y,x)
@@ -126,7 +126,7 @@ v1=HSIC.2(x,y.x,z.x,k.x,k.y,k.z); v2=HSIC.2(y,z.y,x.y,k.y,k.z,k.x)
      v3=HSIC.2(z,x.z,y.z,k.z,k.x,k.y)
 if(v1<v2){if(v1<v3)top=1 else top=3} else {if(v2<v3)top=2 else top=3} ##
 
-## 下流を推定 ##
+## Estimate the bottom ##
 x.yz=f(x.y,z.y); y.zx=f(y.z,x.z); z.xy=f(z.x,y.x)
 if(top==1){
      v1=HSIC.1(y.x,z.xy,k.y,k.z); v2=HSIC.1(z.x,y.zx,k.z,k.y)
@@ -140,23 +140,23 @@ if(top==3){
      v1=HSIC.1(z.y,x.yz,k.z,k.x); v2=HSIC.1(x.y,z.xy,k.x,k.z)
      if(v1<v2){middle=1; bottom=2} else {middle=2; bottom=1}
 }
-## 結果を出力 ##
-print(paste("上流=",top))
-print(paste("中流=",middle))
-print(paste("下流=",bottom))
+## Output results ##
+print(paste("top=",top))
+print(paste("middle=",middle))
+print(paste("bottom=",bottom))
 
 
-### 例78
+### Example 78
 
-## x をならべかえて、HSICの分布をヒストグラムで ##
-## データ生成 ##
+## Sort x to display a histogram of HSIC distribution ##
+## Data Generation ##
 x=rnorm(n); y=rnorm(n); u=HSIC.1(x,y,k.x,k.y)
-## x をならべかえて、帰無分布を構成
+## Sort x to construct the null distribution
 m=100; w=NULL; 
 for(i in 1:m){x=x[sample(n,n)]; w=c(w,HSIC.1(x,y,k.x,k.y))}
-## 棄却域を設定
+## Set rejection area
 v=quantile(w,0.95)
-## グラフで表示
+## Display in graph
 plot(density(w),xlim=c(min(w,v,u),max(w,v,u)))
 abline(v=v,col="red",lty=2,lwd=2)
 abline(v=u,col="blue",lty=1,lwd=2)
@@ -180,16 +180,16 @@ return(S/choose(n,4))
 }
 
 
-### 例79
+### Example 79
 
 sigma=1; k=function(x,y)exp(-(x-y)^2/sigma^2); k.x=k; k.y=k
-## データの生成
+## Data Generation
 n=100; x=rnorm(n)
-a=0        ## 独立のとき
-#a=0.2       ## 相関係数0.2
+a=0        ## When it is independent
+#a=0.2       ## Correlation coefficient 0.2
 y=a*x+sqrt(1-a**2)*rnorm(n)
-# y=rnorm(n)*2    ## 分布が等しくないとき
-## 帰無分布の計算
+# y=rnorm(n)*2    ## When the distributions are not equal
+## Calculation of the null distribution
 K.x=matrix(0,n,n); for(i in 1:n)for(j in 1:n)K.x[i,j]=k.x(x[i],x[j])
 K.y=matrix(0,n,n); for(i in 1:n)for(j in 1:n)K.y[i,j]=k.y(y[i],y[j])
 F=array(0,dim=n); for(i in 1:n)F[i]=sum(K.x[i,])/n
@@ -202,14 +202,14 @@ r=20
 lambda=eigen(K)$values/n
 z=NULL; for(s in 1:10000)z=c(z,1/n*(sum(lambda[1:r]*(rchisq(1:r, df=1)-1))))
 v=quantile(z,0.95)
-## 統計量の計算
+## Calculation of statistics
 u=HSIC.U(x,y,k.x,k.y)
-## グラフの図示
+## Illustration of graphs
 plot(density(z),xlim=c(min(z,v,u),max(z,v,u)))
 abline(v=v,col="red",lty=2,lwd=2)
 abline(v=u,col="blue",lty=1,lwd=2)
 
 
-## 5.4 特性カーネルと普遍カーネル
+## 5.4 Characteristic Kernels and Universal Kernels
 
-## 5.5 経験過程入門
+## 5.5 Introduction to Empirical Processes

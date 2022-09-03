@@ -1,4 +1,4 @@
-# 第5章 MMDとHSIC（問題65～83）
+# Ch.5　MMD and HSIC（Problem 65～83）
 
 
 ## 76
@@ -11,7 +11,7 @@ f <- function(u, v) {
   return(u - cc(u, v) / cc(v, v) * v)
 }
 
-## 上流を推定
+## Estimate the top
 cc <- function(x, y) {
   return(sum(x*y) / length(x))
 }
@@ -43,13 +43,13 @@ if (v1 < v2) {
   }
 }
 
-## 下流を推定
+## Estimate the bottom
 x.yz <- f(x.y, z.y)
 y.zx <- f(y.z, x.z)
 z.xy <- f(z.x, y.x)
 if (top == 1) {
-  v1 <- ## 空欄(1) ##
-  v2 <- ## 空欄(2) ##
+  v1 <- ## blank (1) ##
+  v2 <- ## blank (2) ##
   if (v1 < v2) {
     middle <- 2
     bottom <- 3
@@ -59,8 +59,8 @@ if (top == 1) {
   }
 }
 if (top == 2) {
-  v1 <- ## 空欄(3) ##
-  v2 <- ## 空欄(4) ##
+  v1 <- ## blank (3) ##
+  v2 <- ## blank (4) ##
   if (v1 < v2) {
     middle <- 3
     bottom <- 1
@@ -70,8 +70,8 @@ if (top == 2) {
   }
 }
 if (top == 3) {
-  v1 <- ## 空欄(5) ##
-  v2 <- ## 空欄(6) ##
+  v1 <- ## blank (5) ##
+  v2 <- ## blank (6) ##
   if (v1 < v2) {
     middle <- 1
     bottom <- 2
@@ -81,10 +81,10 @@ if (top == 3) {
   }
 }
 
-## 結果を出力
-print(paste("上流 = ", top))
-print(paste("中流 = ", middle))
-print(paste("下流 = ", bottom))
+## Output results
+print(paste("top = ", top))
+print(paste("middle = ", middle))
+print(paste("bottom = ", bottom))
 
 
 ## 77

@@ -1,4 +1,4 @@
-# 第6章 Gauss過程と関数データ解析（問題84～100）
+# Ch.6　Gauss Process and Functional Data Analysis（Problem 84～100）
 
 
 ## 86

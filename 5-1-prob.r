@@ -1,5 +1,4 @@
-# 第1章 正定値カーネル（問題1～15）
-
+# Ch.1 Positive Definite Kernel（Problem 1～15）
 
 ## 2
 k <- function(x, y, lambda) {
@@ -21,7 +20,7 @@ yy <- NULL
 for (zz in xx)
   yy <- c(yy, f(zz, 0.50))
 lines(xx, yy, col = "red")
-title("Nadaraya-Watson 推定量")
+title("Nadaraya-Watson Estimate")
 legend("topleft", legend = paste0("lambda = ", c(0.05, 0.35, 0.50)),
        lwd = 1, col = c("green", "blue", "red"))
 
@@ -31,7 +30,7 @@ k <- function(x, y, sigma2) {
   return(exp(-(x-y)^2 / 2 / sigma2))
 }
 
-# データ生成
+# Data Generation
 n <- 100
 x <- 2 * rnorm(n)
 y <- sin(2*pi*x) + rnorm(n) / 4
@@ -72,7 +71,7 @@ yy <- NULL
 for (zz in xx)
   yy <- c(yy, f(zz, sigma2.best))
 lines(xx, yy, col = "red")
-title("Nadaraya-Watson 推定量")
+title("Nadaraya-Watson estimate")
 
 
 ## 12

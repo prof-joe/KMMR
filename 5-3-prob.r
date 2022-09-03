@@ -1,4 +1,4 @@
-# 第3章 再生核Hilbert空間（問題31～45）
+# Ch.3　Reproducing Kernel Hilbert Space（Problem 31～45）
 
 
 ## 38
@@ -26,7 +26,7 @@ curve(phi(0, x), -2, 2, ylim = c(-2, 8), col = 1, ylab = "phi")
 for (i in 1:3)
   curve(phi(i, x), -2, 2, ylim = c(-2, 8), add = TRUE, ann = FALSE, col = i + 1)
 legend("topright", legend = paste("j = ", 0:3), lwd = 1, col = 1:4)
-title("Gauss カーネルの固有関数")
+title("Characteristic function of Gauss Kernel")
 
 
 ## 42
